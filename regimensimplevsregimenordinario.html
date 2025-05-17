@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground: Régimen Simple vs. Régimen Ordinario</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+        }
+        aside {
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+        }
+        aside h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+            border-bottom: 1px solid #555;
+            padding-bottom: 10px;
+        }
+        aside ol {
+            list-style: none;
+            padding: 0;
+        }
+        aside li a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            padding: 8px 0;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+        }
+        aside li a:hover {
+            background-color: #555;
+            padding-left: 5px;
+        }
+        main {
+            margin-left: 220px; /* Adjust based on aside width + padding */
+            padding: 20px;
+            flex-grow: 1;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 10px;
+        }
+        section {
+            background-color: #fff;
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            scroll-margin-top: 10px; /* Offset for fixed header if needed */
+        }
+        h2 {
+            color: #0056b3;
+        }
+        .comparison-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .regime-simple, .regime-ordinario {
+            flex: 1;
+            min-width: 250px; /* Minimum width before wrapping */
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .regime-simple {
+            background-color: #e7f0ff;
+            border: 1px solid #99c0ff;
+        }
+        .regime-ordinario {
+            background-color: #ffe7e7;
+            border: 1px solid #ff9999;
+        }
+        .regime-simple h3, .regime-ordinario h3 {
+            margin-top: 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid;
+        }
+        .regime-simple h3 { color: #003d80; border-color: #003d80; }
+        .regime-ordinario h3 { color: #800000; border-color: #800000; }
+
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+            cursor: help;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position above the text */
+            left: 50%;
+            margin-left: -110px; /* Use half of the width */
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Simple Calculator/Tool Styles */
+        .tool-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9e9e9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .tool-section label, .tool-section input, .tool-section button {
+            margin-bottom: 10px;
+            display: block;
+        }
+         .tool-section input[type="number"] {
+            width: 95%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .tool-section button {
+            padding: 10px 15px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .tool-section button:hover {
+            background-color: #003d80;
+        }
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            border-radius: 3px;
+        }
+        .code { font-family: monospace; background-color: #eee; padding: 2px 4px; border-radius: 3px;}
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            aside { position: static; width: 100%; height: auto; overflow-y: visible; }
+            main { margin-left: 0; padding: 15px; }
+            .comparison-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <aside>
+        <h2>Pasos del Video</h2>
+        <ol>
+            <li><a href="#step1">Introducción y Pregunta Clave</a></li>
+            <li><a href="#step2">Aclaración Importante (Simple vs Simplificado)</a></li>
+            <li><a href="#step3">Naturaleza de los Regímenes</a></li>
+            <li><a href="#step4">Historia y Contexto RST</a></li>
+            <li><a href="#step5">Base del Impuesto</a></li>
+            <li><a href="#step6">Tarifas</a></li>
+            <li><a href="#step7">Costos, Gastos y Deducciones</a></li>
+            <li><a href="#step8">Agente Retenedor</a></li>
+            <li><a href="#step9">Sujeto Pasivo de Retención</a></li>
+            <li><a href="#step10">Impuestos Unificados (Renta e ICA)</a></li>
+            <li><a href="#step11">Descuentos Tributarios</a></li>
+            <li><a href="#step12">Formularios y Periodicidad</a></li>
+            <li><a href="#step13">Conciliación Fiscal</a></li>
+            <li><a href="#step14">Exoneración Aportes Parafiscales</a></li>
+            <li><a href="#step15">Autorretención Especial</a></li>
+            <li><a href="#step16">Bancarización</a></li>
+            <li><a href="#step17">Identificación en el RUT</a></li>
+            <li><a href="#step18">¿Cuándo Elegir Cada Régimen?</a></li>
+            <li><a href="#step19">Conclusión y Recomendación Final</a></li>
+        </ol>
+    </aside>
+
+    <main>
+        <h1>Playground: Régimen Simple (RST) vs Régimen Ordinario (ROT)</h1>
+        <section id="step1">
+            <h2>Paso 1: Introducción y Pregunta Clave (0:00 - 0:21)</h2>
+            <p>El video comienza planteando la pregunta fundamental que muchos empresarios y negocios se hacen: ¿Qué régimen tributario me conviene más? Se menciona que ambos tienen ventajas y desventajas, y elegir correctamente puede impactar significativamente el pago de impuestos, el flujo de caja y la operatividad.</p>
+            <p><strong>Objetivo del video:</strong> Explicar de forma sencilla las características, diferencias, ventajas y desventajas de ambos regímenes.</p>
+<li><a href="https://youtu.be/aMjdqc_yjxA" target="_blank">▶️</a>.</li> 
+        </section>
+
+        <section id="step2">
+            <h2>Paso 2: Aclaración Importante (Simple vs Simplificado) (0:48 - 1:16)</h2>
+            <p>Se hace una aclaración crucial: El <strong>Régimen Simple de Tributación (RST)</strong> es diferente al antiguo <strong>Régimen Simplificado</strong>.</p>
+            <ul>
+                <li>El RST es un <strong>régimen de tributación</strong> actual.</li>
+                <li>El Régimen Simplificado (y el Régimen Común) eran categorías relacionadas principalmente con el <span class="tooltip">IVA<span class="tooltiptext">Impuesto sobre las Ventas. Impuesto indirecto sobre el consumo.</span></span>, derogadas por la Ley 1943 de 2018.</li>
+                <li>Actualmente, las categorías relacionadas con IVA son <strong>Responsables de IVA</strong> y <strong>No Responsables de IVA</strong>.</li>
+            </ul>
+            <p>Es importante no confundir el RST con el antiguo Régimen Simplificado.</p>
+        </section>
+
+        <section id="step3">
+            <h2>Paso 3: Naturaleza de los Regímenes (1:16 - 1:51)</h2>
+            <p>Se describe la naturaleza fundamental de cada régimen:</p>
+            <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p>Es <strong>optativo y voluntario</strong>. El contribuyente elige pertenecer si cumple las condiciones (Art. 905 y 906 E.T.).</p>
+			<li><a href="https://estatuto.co/905" target="_blank">Art. 905</a>.</li> <li><a href="https://estatuto.co/906" target="_blank">Art. 906</a>.</li>
+
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p>Es el régimen <strong>por defecto</strong> (la "configuración de fábrica"). Se pertenece a él obligatoriamente a menos que se opte activamente por el RST.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="step4">
+            <h2>Paso 4: Historia y Contexto RST (1:51 - 3:09)</h2>
+            <p>Breve historia y contexto internacional del RST:</p>
+            <ul>
+                <li>Nace con la <strong>Ley 1943 de 2018</strong> (vigente aproximadamente 6 años al momento del video).</li>
+                <li>Ha impulsado la <strong>formalización</strong> de empresarios, independientes y emprendedores.</li>
+                <li>Hubo un intento (fallido) de eliminarlo en un proyecto de reforma tributaria (Ley 300).</li>
+                <li>Regímenes similares existen con éxito en otros países:
+                    <ul>
+                        <li>México: Régimen Simplificado de Confianza (RESICO)</li>
+                        <li>Perú: Nuevo RUS (Régimen Único Simplificado)</li>
+                        <li>Argentina: Monotributo</li>
+                        <li>Italia: Regime Forfettario</li>
+                    </ul>
+                </li>
+                <li>Colombia tuvo un "Monotributo" entre 2016-2018, precursor del RST.</li>
+            </ul>
+            <p>Esto sugiere que el modelo tiene potencial y ha funcionado en otros lugares.</p>
+        </section>
+
+        <section id="step5">
+            <h2>Paso 5: Base del Impuesto (3:26 - 4:08)</h2>
+            <p>Una diferencia fundamental es cómo se calcula la base sobre la cual se aplica el impuesto principal:</p>
+            <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p>La base son los <strong>ingresos brutos</strong> (total de ingresos antes de devoluciones o descuentos).</p>
+                    <p><code>Impuesto = Ingresos Brutos * Tarifa Simple</code></p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p>La base es la <strong><span class="tooltip">Renta Líquida<span class="tooltiptext">Resultado de restar a los ingresos brutos los costos, gastos, deducciones y rentas exentas permitidas fiscalmente. Es la base para calcular el impuesto de renta.</span></span></strong> (Utilidad Fiscal).</p>
+                    <p><code>Renta Líquida = Ingresos Brutos - Costos - Gastos - Deducciones - Rentas Exentas</code></p>
+                    <p><code>Impuesto = Renta Líquida * Tarifa Renta</code></p>
+                </div>
+            </div>
+            <div class="tool-section">
+                <h4>Herramienta Conceptual: Cálculo de Base</h4>
+                <label for="ingresos">Ingresos Brutos:</label>
+                <input type="number" id="ingresos" placeholder="Ej: 100000000">
+                <label for="costosGastos">Costos y Gastos (Aprox):</label>
+                <input type="number" id="costosGastos" placeholder="Ej: 60000000">
+                <button onclick="calcularBaseConceptual()">Calcular Bases Conceptuales</button>
+                <div id="result-base-rst" class="result" style="display: none;"></div>
+                <div id="result-base-rot" class="result" style="display: none;"></div>
+            </div>
+        </section>
+
+        <section id="step6">
+            <h2>Paso 6: Tarifas (4:30 - 5:16)</h2>
+            <p>Las tarifas aplicables también difieren:</p>
+            <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p>Tarifas <strong>progresivas</strong> del <strong>1.2% al 14.5%</strong>.</p>
+                    <p>Aplicadas sobre los <strong>ingresos brutos</strong>.</p>
+                    <p>La tarifa específica depende de:
+                        <ol>
+                            <li>El <strong>grupo de actividad económica</strong> (5 grupos definidos).</li>
+                            <li>El <strong>nivel de ingresos brutos</strong> anuales.</li>
+                        </ol>
+                    </p>
+                    <p>Refleja el principio de equidad vertical: a mayor capacidad de pago (ingresos), mayor tarifa.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p>Tarifas <strong>progresivas</strong> del <strong>19% al 39%</strong> para <strong>Personas Naturales Residentes</strong> (Art. 241 E.T.).</p>
+			<li><a href="https://estatuto.co/241" target="_blank">Art. 241</a>.</li>
+                    <p>Tarifa <strong>fija</strong> del <strong>35%</strong> para <strong>Personas Jurídicas</strong>.</p>
+                     <p>Aplicadas sobre la <strong>renta líquida</strong>.</p>
+                     <p>(Para PN, la progresividad inicia sobre las 1090 <span class="tooltip">UVT<span class="tooltiptext">Unidad de Valor Tributario. Unidad de medida actualizada anualmente que se usa para determinar valores de impuestos, sanciones, cuantías, etc.</span></span> de renta líquida).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="step7">
+            <h2>Paso 7: Costos, Gastos y Deducciones (6:05 - 7:44)</h2>
+            <p>La posibilidad de restar costos y gastos es una diferencia clave:</p>
+             <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p><strong>No permite</strong> la imputación (resta) de costos, gastos, deducciones ni rentas exentas.</p>
+                    <p>El impuesto se calcula directamente sobre el ingreso bruto, sin importar los gastos incurridos.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p><strong>Sí permite</strong> la imputación de costos, gastos, deducciones y rentas exentas.</p>
+                    <p>Para que un costo o gasto sea deducible, debe cumplir varios requisitos:</p>
+                    <ul>
+                        <li><strong>Relación de causalidad, necesidad y proporcionalidad</strong> con la actividad generadora de renta. (Ej: No se puede deducir una lavadora en una consultoría contable).</li>
+                        <li>Estar <strong>soportado electrónicamente</strong>: Factura electrónica, Documento Soporte Electrónico (para no obligados a facturar, requiere que el vendedor tenga <span class="tooltip">RUT<span class="tooltiptext">Registro Único Tributario. Identificación tributaria en Colombia.</span></span>), Nómina Electrónica (para costos laborales), Eventos Radian (para facturas a crédito como título valor).</li>
+                        <li>Cumplir con la <strong>bancarización</strong> (Art. 771-5 E.T.): Pagos por transferencia, tarjetas, billeteras electrónicas (<span class="tooltip">Nequi<span class="tooltiptext">Plataforma financiera digital en Colombia.</span></span>, <span class="tooltip">Daviplata<span class="tooltiptext">Plataforma financiera digital en Colombia.</span></span>, etc.). Hay un tope para pagos en efectivo.</li>
+<li><a href="https://estatuto.co/771-5" target="_blank">Art. 771-5</a>.</li>
+                    </ul>
+                    <p>Si no se cumplen estos requisitos, el costo/gasto no es deducible.</p>
+                </div>
+            </div>
+        </section>
+
+         <section id="step8">
+            <h2>Paso 8: Agente Retenedor (Renta/ICA) (17:45 - 18:17)</h2>
+            <p>Quién practica retenciones en la fuente a título de Renta o ICA:</p>
+             <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p><strong>No son agentes retenedores</strong> de Renta ni de ICA.</p>
+                    <p><strong>Excepción:</strong> Sí practican retención en la fuente sobre <strong>pagos laborales</strong> si corresponde.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p><strong>Sí son agentes retenedores</strong>.</p>
+                    <ul>
+                        <li>Personas Jurídicas: Siempre.</li>
+                        <li>Personas Naturales: Si cumplen los topes de ingresos o patrimonio del Art. 368-2 E.T. (30.000 UVT).</li>
+<li><a href="https://estatuto.co/368-2" target="_blank">Art. 368-2</a>.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="step9">
+            <h2>Paso 9: Sujeto Pasivo de Retención (Renta/ICA) (19:59 - 20:18)</h2>
+            <p>A quién le practican retenciones en la fuente a título de Renta o ICA:</p>
+             <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p><strong>No son sujetos pasivos</strong> de retención en la fuente a título de Renta ni de ICA.</p>
+                    <p>Cuando venden, no les pueden practicar estas retenciones. Esto mejora significativamente el <strong>flujo de caja</strong>.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p><strong>Sí son sujetos pasivos</strong> de retención en la fuente.</p>
+                    <p>Les practican retenciones en la fuente (Renta, ICA) cuando realizan ventas a agentes retenedores.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="step10">
+             <h2>Paso 10: Impuestos Unificados (Renta e ICA) (11:04 - 11:44, 12:12 - 12:27)</h2>
+             <p>Cómo se manejan los impuestos principales:</p>
+              <div class="comparison-container">
+                 <div class="regime-simple">
+                     <h3>Régimen Simple (RST)</h3>
+                     <p><strong>Sustituye y unifica</strong> el Impuesto de Renta y el Impuesto de Industria y Comercio (ICA).</p>
+                     <p>Se paga una única tarifa (Tarifa SIMPLE) que incluye ambos componentes (nacional y municipal/distrital).</p>
+                     <p>La DIAN recauda y luego distribuye la parte del ICA al municipio/distrito correspondiente.</p>
+                 </div>
+                 <div class="regime-ordinario">
+                     <h3>Régimen Ordinario (ROT)</h3>
+                     <p>Se pagan los impuestos de forma <strong>separada</strong>:</p>
+                     <ul>
+                         <li>Impuesto de Renta y Complementarios (anual, a la DIAN).</li>
+                         <li>Impuesto de Industria y Comercio (ICA) (anual, al municipio/distrito).</li>
+                         <li>Posibles sobretasas asociadas al ICA (Bomberil, Avisos y Tableros).</li>
+                     </ul>
+                 </div>
+             </div>
+         </section>
+
+         <section id="step11">
+            <h2>Paso 11: Descuentos Tributarios (12:54 - 15:44)</h2>
+            <p>Beneficios que disminuyen el impuesto a pagar:</p>
+             <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p>Permite <strong>3 descuentos tributarios específicos</strong> (se restan directamente del impuesto liquidado):</p>
+                    <ol>
+                        <li><strong>Aportes a pensión a cargo del empleador (12%):</strong> Se puede descontar el 100% de este aporte. Incentiva la contratación formal.</li>
+                        <li><strong>0.5% de las ventas por mecanismos electrónicos:</strong> Descuento por ventas realizadas a través de datáfono, transferencias, tarjetas, etc. Incentiva la bancarización y la fiscalización.</li>
+                        <li><strong><span class="tooltip">GMF<span class="tooltiptext">Gravamen a los Movimientos Financieros, conocido como 4x1000.</span></span> (4x1000):</strong> Se puede tomar opcionalmente el 100% del GMF pagado como descuento, *O* el 0.5% de ventas electrónicas (el que sea más beneficioso, pero no ambos simultáneamente respecto a los mismos ingresos). El descuento del GMF está limitado a no exceder el 0.004% de los ingresos brutos anuales.</li>
+                    </ol>
+                    <p>Estos descuentos pueden reducir significativamente el impuesto a pagar.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p>Permite aplicar <strong>todos los descuentos tributarios</strong> contemplados en el Estatuto Tributario y normas reglamentarias (Ej: Donaciones, inversiones específicas, etc., según aplique).</p>
+                    <p>Estos descuentos también se restan del impuesto liquidado, pero su naturaleza y aplicabilidad son diferentes a los del RST.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="step12">
+            <h2>Paso 12: Formularios y Periodicidad (Principal) (16:36 - 17:27)</h2>
+            <p>Declaraciones y pagos principales:</p>
+            <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <ul>
+                        <li><strong>Formulario 260:</strong> Declaración Anual Consolidada (unifica Renta e ICA).</li>
+<li><a href="https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2025/Formulario_260_2025.pdf" target="_blank">Formulario 260</a>.</li>
+                        <li><strong>Formulario 2593:</strong> Presentación y pago de Anticipos Bimestrales (obligatorio).</li>
+<li><a href="https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2024/Formulario_2593_2025.pdf">Formulario 2593</a>.</li>
+                    </ul>
+                    <p>Aunque la declaración es anual, los pagos se hacen bimestralmente.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <ul>
+                        <li><strong>Formulario 110 (PJ) o 210 (PN):</strong> Declaración de Renta Anual.</li>
+<li><a href="https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2025/Formulario_110_2025.pdf" target="_blank">Formulario 110</a>.</li>
+<li><a href="https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2025/Formulario_210_2025.pdf" target="_blank">Formulario 210</a>.</li>
+                        <li><strong>Formulario de ICA:</strong> Declaración Anual (presentada al municipio/distrito).</li>
+                    </ul>
+                    <p>Las declaraciones principales son anuales.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="step13">
+            <h2>Paso 13: Conciliación Fiscal (19:28 - 19:48)</h2>
+            <p>Obligación de presentar el reporte de conciliación fiscal:</p>
+            <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p><strong>No tienen la obligación</strong> de elaborar ni presentar el reporte de conciliación fiscal.</p>
+                    <p>Representa una menor carga administrativa para el contribuyente y el contador.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p><strong>Sí están obligados</strong> a elaborar y presentar el reporte de conciliación fiscal junto con la declaración de renta.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="step14">
+            <h2>Paso 14: Exoneración Aportes Parafiscales (Art. 114-1 E.T.) (20:57 - 21:05)</h2>
+<li><a href="https://estatuto.co/114-1" target="_blank">Art. 114-1 Estatuto Tributario (E.T.)</a>.</li>
+            <p>Beneficio de exoneración de ciertos aportes parafiscales:</p>
+            <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p><strong>Pueden aplicar</strong> la exoneración de aportes parafiscales (Salud empleador, SENA, ICBF) si cumplen los requisitos del Art. 114-1 E.T.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                     <p><strong>Pueden aplicar</strong> la exoneración de aportes parafiscales (Salud empleador, SENA, ICBF) si cumplen los requisitos del Art. 114-1 E.T.</p>
+                </div>
+            </div>
+             <p><strong>Nota:</strong> Ambos regímenes pueden acceder a este beneficio si cumplen las condiciones legales.</p>
+        </section>
+
+         <section id="step15">
+            <h2>Paso 15: Autorretención Especial (si hay exoneración Art. 114-1 E.T.) (21:05 - 21:50)</h2>
+            <p>Obligación de practicar la autorretención especial de renta cuando se aplica la exoneración de parafiscales:</p>
+             <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p>Aunque estén exonerados de parafiscales, <strong>NO tienen la obligación</strong> de practicar la autorretención especial de renta.</p>
+                    <p>Esto representa una ventaja significativa en flujo de caja, ya que no deben anticipar pagos mensuales por este concepto.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p>Las Personas Jurídicas que aplican la exoneración de parafiscales <strong>SÍ están obligadas</strong> a practicar la autorretención especial de renta.</p>
+                    <p>Deben presentarla y pagarla mensualmente en el Formulario 350.</p>
+<li><a href="https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2024/Formulario_350_01082024.pdf" target="_blank">Formulario 350</a>.</li>
+                    <p>Esto afecta el flujo de caja mensual.</p>
+                </div>
+            </div>
+        </section>
+
+         <section id="step16">
+            <h2>Paso 16: Bancarización (24:03 - 24:32)</h2>
+            <p>Requisito de que los pagos estén bancarizados:</p>
+             <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p>Los pagos <strong>no necesariamente</strong> deben estar bancarizados para efectos del impuesto SIMPLE.</p>
+                    <p><strong>Sin embargo</strong>, si el contribuyente es responsable de IVA y quiere tomarse los <strong>IVAs descontables</strong> de sus compras, esos pagos <strong>SÍ deben estar bancarizados</strong>.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                     <p><strong>Todo pago</strong> (costos, gastos, deducciones) que se pretenda tomar como deducible en el impuesto de renta <strong>debe estar bancarizado</strong>, cumpliendo los requisitos del Art. 771-5 E.T. y sus topes para efectivo.</p>
+<li><a href="https://estatuto.co/771-5" target="_blank">Art. 771-5</a>.</li>
+                </div>
+            </div>
+        </section>
+
+         <section id="step17">
+            <h2>Paso 17: Identificación en el RUT (24:40 - 24:57)</h2>
+            <p>Cómo saber a qué régimen pertenece un contribuyente mirando su RUT:</p>
+             <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST)</h3>
+                    <p>En la sección de responsabilidades tributarias (Casilla 53 del RUT), aparece el <strong>Código 47</strong>.</p>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT)</h3>
+                    <p>En la sección de responsabilidades tributarias (Casilla 53 del RUT), aparece el <strong>Código 05</strong> (Impuesto Renta y Complementarios Régimen Ordinario).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="step18">
+            <h2>Paso 18: ¿Cuándo Elegir Cada Régimen? (25:06 - 28:31)</h2>
+            <p>Factores a considerar para la elección:</p>
+            <div class="comparison-container">
+                <div class="regime-simple">
+                    <h3>Régimen Simple (RST) - Recomendable si:</h3>
+                    <ul>
+                        <li>El negocio tiene <strong>pocos costos y gastos</strong> deducibles o difíciles de soportar.</li>
+                        <li>Se busca un sistema <strong>ágil, fácil, rápido y menos burocrático</strong>.</li>
+                        <li>Se quiere <strong>simplificar</strong> cargas administrativas y fiscales.</li>
+                        <li>Se desea <strong>mejorar el flujo de caja</strong> al no estar sujeto a retenciones de Renta/ICA y no pagar autorretención especial.</li>
+                        <li>Se busca <strong>formalización</strong> (especialmente pequeños empresarios/emprendedores).</li>
+                        <li>Los ingresos anuales son <strong>inferiores a 100.000 UVT</strong>.</li>
+                        <li><strong>¡Cuidado!</strong> Las tarifas pueden ser muy altas para actividades específicas (ej: servicios profesionales - Grupo 4, Tarifa hasta 14.5%), haciendo que no sea conveniente para todos.</li>
+                    </ul>
+                </div>
+                <div class="regime-ordinario">
+                    <h3>Régimen Ordinario (ROT) - Recomendable si:</h3>
+                    <ul>
+                        <li>El negocio tiene <strong>altos costos y gastos</strong> deducibles y bien soportados.</li>
+                        <li>Se pueden aprovechar significativamente <strong>deducciones y rentas exentas</strong>.</li>
+                        <li>Se cuenta con la <strong>estructura operativa y administrativa</strong> para manejar la complejidad (soportes electrónicos, requisitos de deducción, múltiples declaraciones, retenciones, conciliación fiscal, autorretención).</li>
+                        <li>La actividad económica tiene una tarifa muy alta en el RST (ej: servicios profesionales).</li>
+                        <li>Los ingresos anuales son <strong>superiores a 100.000 UVT</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="step19">
+            <h2>Paso 19: Conclusión y Recomendación Final (27:24 - 30:39)</h2>
+            <p>La elección depende del <strong>perfil específico del negocio</strong>.</p>
+            <ul>
+                <li><strong>No hay una respuesta única:</strong> No a todas las empresas les sirve el RST y no a todas les sirve el ROT.</li>
+                <li><strong>Realizar un análisis y proyección tributaria:</strong> Es fundamental comparar cuánto se pagaría en cada régimen antes de tomar una decisión. Usar el simulador de la DIAN o buscar asesoría profesional.</li>
+                <li><strong>Tributación Inteligente:</strong> Utilizar las herramientas legales (como los regímenes y beneficios) para optimizar la carga fiscal, no es evasión, es planificación.</li>
+                <li><strong>Importancia de la Asesoría:</strong> Buscar un experto (contador, tributarista) es clave para tomar la decisión correcta y evitar pagar impuestos innecesarios o incurrir en errores que lleven a sanciones. Una mala decisión puede afectar gravemente las finanzas del negocio.</li>
+                <li><strong>Actualización Constante:</strong> La normativa cambia, es vital mantenerse informado.</li>
+            </ul>
+            <p><strong>Mensaje final:</strong> ¡Asesórese, analice y pague sus impuestos de forma inteligente para no perder dinero!</p>
+            <div class="tool-section">
+                <h4>Recursos Adicionales</h4>
+                <p>Para un análisis más profundo, considera:</p>
+                <ul>
+                    <li>Consultar el <a href="https://micrositios.dian.gov.co/regimen-simple-tributacion/" target="_blank">Micrositio del Régimen Simple en la DIAN</a>.</li>
+                    <li>Descargar y utilizar el <a href="https://www.dian.gov.co/impuestos/Regimen-Simple-de-Tributacion-RST/Documents/Simulador-RST-2024.zip" target="_blank">Simulador RST de la DIAN</a>.</li>
+                    <li>Revisar los artículos mencionados del <a href="https://estatuto.co/" target="_blank">Estatuto Tributario (E.T.)</a>.</li>
+                    <li>Buscar asesoría contable profesional.</li>
+<li>Transcripción del video:
+
+[00:00:00] Régimen simple o régimen ordinario.
+[00:00:02] Seguro te has hecho esta pregunta miles de veces.
+[00:00:05] Qué régimen tributario me conviene más a mí, a mi negocio y a mis clientes.
+[00:00:10] Ambos tienen ventajas y desventajas,
+[00:00:13] pero si tú eliges el correcto, puede marcar una gran diferencia en el pago de tus impuestos, en el flujo de caja y en la operatividad de tu negocio.
+[00:00:21] Hola, me llamo Miguel Grattz y en este versus te explicaré de una forma sencilla las principales características, diferencias, cualidades,
+[00:00:29] ventajas y desventajas del régimen simple de tributación y del régimen ordinario.
+[00:00:34] Sígueme si quieres aprender más del régimen simple de tributación
+[00:00:37] y guarda este video para que hagas una correcta planificación tributaria y te aseguro que te ahorrarás
+[00:00:43] [glitch effect] millones de pesos en impuestos.
+[00:00:45] Ahora sí, comencemos.
+[00:00:48] [voice filter starts] Antes que nada, quiero hacer una aclaración.
+[00:00:49] El régimen simple es un régimen de tributación y no tiene nada que ver con lo que conocíamos como régimen simplificado.
+[00:00:58] A la fecha aún existe cierta confusión con esta expresión.
+[01:02] Recordemos que los términos régimen simplificado y régimen común fueron derogados y modificados por la reforma tributaria ley 1943 del año 2018.
+[01:12] Ahora son conocidos como responsables y no responsables de IVA. [voice filter ends]
+[01:16] El régimen simple de tributación es un régimen optativo y voluntario.
+[01:20] Es decir, es mi decisión pertenecer o no a este régimen siempre y cuando
+[01:25] cumpla con las condiciones de los artículos 905 y 906 del Estatuto Tributario.
+[01:31] En cambio, el régimen ordinario es un régimen de tributación con el que nosotros podríamos decir, nacemos, entre comillas,
+[01:39] o al que estamos obligados a pertenecer. Es, por así decirlo, nuestra configuración de fábrica en temas fiscales.
+[01:46] Es un régimen que ya está impuesto de forma obligatoria.
+[01:51] [transition sound] Recordemos un poco historia del régimen simple.
+[01:53] El régimen simple nace a través de la ley 1943 del año 2018.
+[01:59] Llevamos aproximadamente 6 años gravables trabajando con el simple
+[02:04] y desde mi experiencia profesional puedo decir que es un régimen que ha impulsado la formalización,
+[02:09] sobre todo de empresarios, independientes y emprendedores, de eso no cabe duda.
+[02:14] Sin embargo, en el último proyecto de ley 300 reforma tributaria, se planteó desaparecer este régimen,
+[02:22] cosa que no fue posible debido a que la reforma tributaria no fue aprobada en el Congreso.
+[02:27] Esperemos que en un futuro no muy lejano, el régimen simple no desaparezca y perdure en el tiempo y se quede en la tributación colombiana,
+[02:36] ya que en otros países que han optado un régimen similar ha sido un éxito.
+[02:40] Tenemos el caso de México, que en México llamado como régimen simplificado de confianza,
+[02:45] en Perú se llama nuevo Rus, régimen único simplificado,
+[02:50] en Argentina llamado como monotributo,
+[02:52] y aquí en Colombia nosotros eh tuvimos un monotributo entre el año 2016 y 2018, que ese fue como el borrador
+[03:00] o los cimientos para construir lo que conocemos hoy en día como régimen simple.
+[03:05] E inclusive en Italia también se le conoce como regime forfetario. [music sting]
+[03:09] Con esto nos hacemos una idea de que el régimen simple de tributación tiene potencial de crecimiento para la formalización de futuros emprendedores y futuras empresas porque incentiva la contratación directa de empleados y ya vamos a mirar el por qué.
+[03:26] [transition sound] Una de las primeras... [sound effect cuts off speech]
+[03:30] La primera diferencia que encontramos entre el régimen simple de tributación y el régimen ordinario
+[03:35] es que el régimen simple, el impuesto es calculado sobre los ingresos brutos,
+[03:40] es decir, los ingresos antes de devoluciones y descuentos, sobre esa base yo aplico mi impuesto directo.
+[03:49] En cambio, en el régimen ordinario, la base del impuesto es lo que conocemos nosotros como la renta líquida o mi utilidad fiscal.
+[03:56] Es decir, tomar mis ingresos menos mis costos, menos mis gastos, menos mis deducciones,
+[04:01] menos mis rentas exentas y sobre esa renta líquida aplicar una tarifa del impuesto de renta y complementarios.
+[04:08] A simple vista, nosotros podríamos pensar que [bleep]
+[04:11] tener que pagar mis impuestos sobre los ingresos brutos, cuando yo obviamente incurro en costos, gastos, deducciones y rentas exentas. Pero no.
+[04:20] Ya que para que un costo o gasto sea deducible del impuesto de renta, tiene que cumplir con una serie de requisitos que veremos más adelante. Continuemos.
+[04:30] [transition sound] Otra diferencia que encontramos entre el régimen simple y el régimen ordinario son las tarifas.
+[04:35] En el régimen simple encontramos tarifas progresivas que van del 1.2 al 14.5%.
+[04:42] Recordemos que esas tarifas son aplicadas sobre los ingresos brutos.
+[04:48] Estas tarifas dependen principalmente de la actividad económica que desarrolle,
+[04:52] es decir, si me encuentro en el grupo 1, 2, 3, 4, 5 del régimen simple y también el nivel de ingresos va a determinar mi tarifa.
+[05:02] Por eso es una tarifa progresiva, cuando el contribuyente tiene mayor capacidad de pago, va a tener una mayor contribución o una mayor carga fiscal,
+[05:11] respetando el principio de equidad vertical que conocemos en la tributación.
+[05:15] En cambio, en el régimen ordinario, las tarifas también son progresivas, pero únicamente para las personas naturales.
+[05:22] Recordemos que estas tarifas de las personas naturales las encontramos en el artículo 241 del Estatuto Tributario,
+[05:29] y las tarifas oscilan del 19 al 39% de mi renta líquida, ¿sí?
+[05:35] Siempre y cuando, obviamente, mi renta líquida esté por encima de las 1090 UVTs.
+[05:40] Y tenemos una tarifa fija para las personas jurídicas del 35%.
+[05:45] Entonces, fíjense que esta tarifa fija es aplicable a qué? A la base del impuesto de renta líquida, a mi utilidad fiscal.
+[05:52] Y las tarifas del simple, que van del 2... del 1.2 al 14.5, son aplicables a los ingresos brutos.
+[05:59] Entonces, fíjense ya cómo ambos están tomando un rumbo completamente diferente en la tributación.
+[06:05] [transition sound] Otra diferencia súper importante es la imputación de costos.
+[06:09] El régimen simple, como tributa sobre ingresos brutos, no permite imputaciones de costos, deducciones ni rentas exentas.
+[06:17] En cambio, el régimen ordinario sí permite la imputación de costos, deducciones y rentas exentas,
+[06:24] porque está grabando la utilidad fiscal o la renta líquida.
+[06:29] Ahí es donde nosotros tenemos que hacer el análisis y revisar qué es más conveniente para mí, si tributar sobre ingresos o tributar sobre renta líquida.
+[06:38] Para que en el régimen ordinario un costo o gasto sea deducible del impuesto de renta, tiene que tener varios factores.
+[06:44] Estos costos deben tener primero que todo una relación de necesidad, causalidad y proporcionalidad con la actividad generadora de renta.
+[06:53] Por ejemplo, yo no podría tomarme como descontable la compra de una lavadora si yo me dedico a prestar servicios de consultoría contable.
+[07:03] No tiene relación el costo con mi actividad generadora de renta.
+[07:07] Número dos, que sea un documento electrónico, es decir, tiene que ser un documento que esté validado en el ambiente electrónico de la DIAN.
+[07:15] Si yo realizo una compra me deben emitir facturación electrónica.
+[07:18] Si yo le realizo una compra a una persona que no emite facturación electrónica,
+[07:21] yo debo realizar un documento soporte [voice filter starts] en adquisiciones efectuadas a sujetos no obligados a expedir factura de venta o documentos equivalentes.
+[07:31] Ojo, y el documento soporte, la persona a quien yo le haga el documento soporte electrónico,
+[07:36] debe tener RUT.
+[07:37] Si no tiene RUT, yo no puedo hacerle un documento soporte y no me podría tomar ese costo o gasto como deducible del impuesto de renta.
+[07:43] Entonces se complica la situación. Usted a veces va y le compra a una persona que no tiene RUT y usted tendría que obligar a esa persona a que se inscriba en el Registro Único Tributario para que usted ese pago se lo pueda tomar como descontable.
+[07:53] o buscar otro proveedor o acreedor que sí tenga el RUT o que sí tenga facturación electrónica.
+[08:01] Si usted tiene empleados, así sea un empleado y usted se quiere tomar los costos y gastos de la nómina, tiene que emitir la nómina electrónica.
+[08:11] La nómina electrónica le permite tomar todos los costos y gastos laborales como deducibles del impuesto de renta.
+[08:17] Fíjense que llevamos ya tres tipos de documentos: facturación electrónica, documento soporte electrónico, nómina electrónica y súmele que si usted compra a crédito tiene que hacerle los eventos electrónicos a la factura electrónica.
+[08:33] Como así, tiene que hacerle el evento de acuse de recibido, el evento de recibido del bien o el servicio,
+[08:37] eh aceptación expresa o tácita de la factura para que se convierta en un título valor y usted pueda tomar esa factura como descontable del impuesto de renta.
+[08:47] Ya hemos contado cuatro tipos de documentos electrónicos que yo debo implementar para imputar ese costo o gasto y además de eso, súmele también la bancarización,
+[08:56] artículo 701 raya 5 del Estatuto Tributario. Los pagos deben estar bancarizados.
+[09:03] Hay un tope de pagos en efectivo, pero la recomendación es que todo esté bancarizado.
+[09:06] Usted debe hacer la transferencia, debe hacer el pago a través de tarjetas débito, a través de tarjetas crédito e inclusive son aceptables los pagos a través de billeteras de bajo monto o billeteras electrónicas como Movi, Vico, Transfiya, Neki, Davi Plata. Estas billeteras también son aceptables.
+[09:25] Pero yo debo bancarizar todo, todo debe estar bancarizado.
+[09:28] Entonces, en resumidas cuentas, para que un costo y gasto sea deducible en el régimen ordinario, tiene que tener relación de necesidad, proporcionalidad y causalidad con la actividad generadora de renta,
+[09:37] tiene que estar soportado con un documento electrónico y tiene que estar bancarizado.
+[09:42] [voice filter starts] Si no cumple con alguno de esos requisitos, ese costo o gasto no se lo puede imputar para disminuir la renta líquida de su impuesto de renta.
+[09:51] [voice filter ends] Entonces fíjense cómo la situación cambia con el régimen simple. En el régimen simple no me preocupo por los costos, ni las deducciones, ni las rentas exentas, pago sobre una tarifa única o una tarifa progresiva sobre mis ingresos,
+[10:03] no me preocupo por la imputación de costos y gastos porque no me lo permite, porque no lo voy a hacer, porque no puedo, porque no tengo la operatividad.
+[10:11] Porque soy una empresa pequeña, quiero simplificar, quiero formalizarme y no tengo un sistema que me haga nómina electrónica, no tengo un sistema para hacer eventos electrónicos, no tengo un sistema para hacer documento soporte, si acaso tengo facturación electrónica y esa que es la que me da la la DIAN gratuitamente, o yo le pago a un proveedor tecnológico y me da solo facturación electrónica porque cumplo con la obligación de facturar,
+[10:28] pero no tengo la operatividad, no tengo el conocimiento, no tengo los recursos y ahí es donde ingresa el régimen simple a darle esa salvavidas a los empresarios y pequeños emprendedores para que dejen esas cargas formales, esas cargas excesivas, se puedan concentrar en su negocio, en su empresa
+[10:45] y que tributen sobre unas tarifas de sus ventas. De esa manera se despreocupan de revisar tantos costos, de revisar tantas imputaciones, tantas deducciones
+[10:55] y pueden crecer en el mercado.
+[11:04] [transition sound] Ahora vamos a hablar de los impuestos que se pagan en el simple y que se pagan en el régimen ordinario.
+[11:09] En regla general, el régimen simple sustituye o unifica la renta y el ICA.
+[11:15] En el simple no existe la renta, no existe el impuesto de renta porque el simple no es un sujeto pasivo del impuesto de renta y complementarios.
+[11:22] Aquí se paga un impuesto que se llama el Simple, impuesto Simple y el impuesto de industria y comercio. Todo lo unifica a una sola tarifa.
+[11:31] Entonces yo aquí, con una sola tarifa unificada que habíamos hablado del 1.2 al 14.5, estoy pagando lo que viene siendo
+[11:40] la renta y el ICA
+[11:42] o el simple y el ICA, estoy unificando todo el impuesto en una sola tarifa, el impuesto nacional y el impuesto municipal o distrital,
+[11:50] que también me estoy desentendiendo con la Secretaría de Hacienda o con el municipio o con el distrito con este pago del impuesto de industria y comercio, porque se lo estoy pagando directamente a la DIAN y la DIAN posteriormente le va a pasar su parte al municipio o al distrito,
+[12:07] su parte correspondiente al impuesto de industria y comercio. Yo unifico todo en una sola tarifa
+[12:12] y qué más unifico? Lo que conlleva el ICA. El ICA puede tener una sobretasa bomberil, el ICA puede tener una sobretasa de avisos y tableros porque tengo vallas publicitarias.
+[12:22] Entonces aquí unifico todo el impuesto en el simple.
+[12:25] En cambio, en el régimen ordinario, yo aparte pago mi renta y complementarios una vez al año,
+[12:31] hago mi declaración de industria y comercio y a eso le sumo mi sobretasa bomberil, que eso depende del municipio,
+[12:37] y súmele los avisos y tableros que es el 15% sobre el impuesto de industria y comercio.
+[12:42] Entonces aquí hay que colocar una balanza y hacer el ejercicio de cuál tarifa es más rentable para mí,
+[12:48] teniendo en cuenta que en uno unifico la renta y el ICA y en el otro lo pago de manera independiente.
+[12:54] [transition sound] Hablemos de los descuentos que aplicarían en el régimen simple y en el régimen ordinario.
+[12:59] En el régimen ordinario se aplican todos los descuentos reglamentados en el Estatuto Tributario, en el Decreto Único Reglamentario, todos los que conocemos.
+[13:07] En el régimen simple solo me puedo tomar tres descuentos en específico:
+[13:12] los aportes como empleador en el fondo de pensión, recordemos que los aportes al fondo de pensión son equivalentes al 16%,
+[13:19] 4% que paga el empleado, 12% que paga el empleador. Ese 12% que paga el empleador me lo puedo tomar 100% como un descuento tributario.
+[13:26] Ojo que es un descuento y no es una deducción. Como es un descuento tributario, ese 12% va a ir directo a descontar el valor de mi impuesto.
+[13:38] Entonces, si mi impuesto dio un valor neto de $1,000,000 de pesos y mis aportes al fondo de pensión fueron $1,500,000 pesos, pues no pagaría el impuesto simple.
+[13:48] Sí pagaría el componente ICA porque el componente ICA no se puede tocar, pero fíjense que ya me ahorraría el componente simple y no lo pagaría porque lo que aportó en pensión es mayor y como es un descuento directo al impuesto,
+[14:01] pues es un beneficio extremadamente bueno y qué pasa? Que incentiva a que las empresas contraten y formalicen sus empleados,
+[14:08] porque si yo tengo una nómina más robusta, si yo tengo más empleados en mi nómina, sé que mi impuesto va a bajar.
+[14:14] También tenemos eh un descuento que es el 0.5% de las ventas por mecanismo electrónicos.
+[14:22] Y aquí también lo que busca la DIAN es incentivar a que las personas vendan de manera electrónica para que la DIAN también pueda fiscalizar
+[14:32] o mejorar sus procesos de fiscalización, incentivando a que usted venda por medios electrónicos.
+[14:38] Entonces si usted vende por medios electrónicos, si usted vende por datáfono, tarjetas débito, tarjetas crédito, transferencias,
+[14:44] esas ventas hechas por esos mecanismos le retribuyen en un descuento tributario también, o sea, un descuento que aplica directamente sobre el impuesto del 0.5%.
+[14:55] Usted dirán, ese descuento no es mucho, pero sí, cuando un descuento va aplicado directamente sobre el impuesto
+[15:08] y no sobre la eh sobre la la deducción, por así decirlo, sino ya sobre el valor liquidado del impuesto, es un beneficio extremadamente positivo.
+[15:22] Y también tenemos la opción de tomarnos de manera optativa u opcional el 100% del gravamen al movimiento financiero,
+[15:30] porque optativo? Porque yo puedo tomar 0.5% de las ventas por mecanismos electrónicos o el 100% del gravamen del movimiento financiero siempre y cuando no sobrepase el 0.004% de mis ingresos netos, mis ingresos brutos.
+[15:44] Esos son mis tres descuentos que solo puedo aplicarme en el simple, los aportes al fondo de pensión a cargo del empleador ese 12%, el 0.5% de las ventas eh por mecanismos electrónicos o el 100% del gravamen siempre y cuando no sobrepase la base.
+[16:01] Lo que busca, como les decía anteriormente, es incentivar la contratación.
+[16:05] Cuando se incentiva la contratación y yo soy consciente que recibo un beneficio tributario por contratar a mis empleados, que es un beneficio directo al impuesto,
+[16:13] yo voy a tener la motivación de contratar a esos empleados que tengo como temporales, que tengo por prestación de servicio, los voy a poder contratar ya directamente en mi nómina,
+[16:25] les voy a dar seguridad, les voy a dar estabilidad laboral, ellos van a tener confianza en la empresa y además de que yo haga esa contratación, tengo un descuento a favor mío en la disminución de mis impuestos.
+[16:36] [transition sound] Hablemos de los formularios. En el régimen simple, yo presento el unificado del simple en el formulario 260 una vez al año.
+[16:45] Sin embargo, yo debo presentar y estoy en la obligación de presentar mis anticipos de forma bimestral.
+[16:51] Los anticipos tienen que ser presentados y pagados sí o sí de manera bimestral en el régimen simple,
+[16:57] que eso también mejora el flujo de caja y la recepción de dineros por parte de la DIAN.
+[17:02] En cambio, en el régimen ordinario, tenemos la presentación en el formulario 110 para personas jurídicas o no residentes,
+[17:08] formulario 210 para personas naturales y residentes, que se presenta una vez al año, ¿sí? Es de forma anual.
+[17:16] Y también tenemos el formulario de industria y comercio que se presenta también una vez al año,
+[17:21] en la mayoría del país, eh y se presenta directamente a las secretarías o al municipio.
+[17:26] Entonces fíjense aquí ya cómo se van desglosando y en un lado encontramos un formulario unificado
+[17:33] y en el otro encontramos varios formularios que van a depender de si soy persona jurídica o natural y según el municipio donde yo me encuentre para la presentación de industria y comercio.
+[17:44] [transition sound] Una diferencia muy importante en el régimen simple versus el régimen ordinario es que el régimen simple
+[17:49] no es agente retenedor del impuesto de renta ni de ICA.
+[17:54] O sea, no practican, no están obligados a practicar retenciones en la fuente a título de renta ni a título de ICA,
+[18:01] con la excepción de los pagos laborales, ahí sí aplicarían retenciones en la fuente.
+[18:05] Por ejemplo, si yo tengo en mi nómina un empleado que gana entre 5, 6, 7 millones de pesos, tendría que hacer la depuración y establecer una retención en la fuente.
+[18:15] Solo en esos casos soy agente retenedor, no aplicaría retenciones en la fuente en mis compras ni retefuente ni retención de ICA.
+[18:21] Pero sí practicaría rete IVA cuando le compre a otro régimen simple.
+[18:25] Entonces, si yo soy régimen simple de tributación y le compro a otro régimen simple de tributación, solo en ese caso sí tendría que practicar la retención de IVA.
+[18:34] Si eres responsable de IVA, es decir, si tú eres un régimen simple de tributación responsable de IVA, estaría en la obligación de retenerle el rete IVA.
+[18:38] Esa sería la única retención... [voice filter starts] eso suena como un trabalenguas... [voice filter ends] sería la única retención que se le aplicaría a un régimen simple.
+[18:42] Caso contrario no se le aplica ningún tipo de retención, ni retención en la fuente ni reteica.
+[18:42] Y esto mejora significativamente el flujo de caja.
+[18:45] En cambio, en el régimen ordinario, sí son sujetos pasivos de retención en la fuente común y corriente.
+[18:49] Al menos que tengan alguna cualidad específica, yo debería practicarles retenciones en la fuente al régimen ordinario.
+[19:05] [transition sound] Esta comparativa afecta mucho el flujo de caja, ¿por qué?
+[19:09] El régimen simple no es un sujeto pasivo de la retención en la fuente, ni a título de renta ni a título de ICA.
+[19:18] Cómo así? Es decir, no practican retenciones en la fuente,
+[19:21] ni tampoco le practican retenciones en la fuente a título de renta ni de ICA. ¿Qué le pueden practicar un régimen simple? El rete IVA.
+[19:28] Si el régimen simple es responsable de IVA y vende con IVA, pues la persona responsable de IVA estaría en la obligación de retenerle el rete IVA.
+[19:38] Esa sería la única retención que se le aplicaría a un régimen simple. Caso contrario no se le aplica ningún tipo de retención, ni retención en la fuente ni reteica.
+[19:42] Y esto mejora significativamente el flujo de caja.
+[19:45] En cambio, en el régimen ordinario, sí son sujetos pasivos de retención en la fuente común y corriente.
+[19:49] Al menos que tengan alguna cualidad específica, yo debería practicarles retenciones en la fuente al régimen ordinario.
+[20:04] [transition sound] Tanto el régimen simple como el régimen ordinario puede exonerarse de los aportes parafiscales que habla el artículo 114 raya 1 del Estatuto Tributario.
+[20:07] Pero aquí hay una gran diferencia.
+[20:09] Es que en el régimen simple, como no es un sujeto pasivo del del impuesto de renta y complementarios,
+[20:12] no tiene la obligación de aplicar la autorretención especial.
+[20:16] Es decir, yo me puedo exonerar de los aportes parafiscales, como lo son el aporte a la salud, el aporte a la ICBF y el aporte al SENA
+[20:23] y no tengo la obligación de aplicar esa autorretención especial que tenemos que aplicarnos de manera mensual en el formulario 350 de retenciones en la fuente.
+[20:31] Aquí ya me desentiendo completamente esa autorretención y aún así puedo seguir optando en el beneficio del artículo 114 raya 1.
+[20:37] En cambio, en el régimen ordinario, también me puedo exonerar, pero si soy una persona jurídica que me exonero los aportes,
+[20:42] tendría la obligación de presentar la autorretención especial de manera mensual en el formulario 350 de retenciones en la fuente.
+[20:49] Y esto es una ventaja en la liberación de flujo de caja de la compañía,
+[20:53] porque puede exonerarse sin necesidad de hacer autorretenciones especiales tomando este beneficio.
+[21:00] Y esto al final se entendería como un mayor flujo de caja en el régimen simple,
+[21:04] porque tendría mayor liquidez, ya no tendría que hacer pagos por autorretención especial.
+[21:10] Y eso le ayudaría a tener liquidez para poder hacer inversiones, para poder invertir, para poder adquirir más inventario, para poder eh mejorar los activos de la compañía, etcétera.
+[21:20] [transition sound] Hablemos de la responsabilidad del IVA y del Impuesto Nacional al Consumo.
+[21:23] En ambos casos, en el régimen simple y en el régimen ordinario, los dos son responsables de esos impuestos.
+[21:29] Si cumplen con las condiciones, ¿por qué? Porque es que el impuesto de IVA y el Impuesto Nacional al Consumo son impuestos indirectos, no son impuestos directos que graban la capacidad contributiva
+[21:41] o la capacidad de pago del contribuyente, sino que graban los bienes y servicios.
+[21:44] Entonces, el régimen simple y el régimen ordinario, en ambos casos serían responsables de IVA y responsables del impuesto nacional al consumo,
+[21:51] pero cambiaría en los pagos.
+[21:54] Y el régimen simple hace anticipos bimestrales y presenta la declaración anual,
+[22:59] es decir, la declaración, formulario 300 de IVA se presenta una vez al año,
+[23:04] pero sí tengo que pagar el IVA de manera bimestral en el formulario 2593 donde presentamos todo,
+[23:11] ahí yo presento también los anticipos del IVA.
+[23:14] Existe una exoneración y es el grupo uno del Simple.
+[23:17] El grupo uno del Simple está conformado por tiendas, minimercados, micromercados, peluquerías.
+[23:24] Este grupo está exonerado del impuesto a las ventas.
+[23:27] Puede operar superando el tope de 3,500 UVTs de ingresos
+[23:30] y puede tener inclusive más de un establecimiento de comercio y aún así no va a ser responsable de IVA.
+[23:36] Es un beneficio increíble para las tiendas, para las peluquerías,
+[23:40] para los minimercados, para los micromercados, para ese tipo de comercio de barrio,
+[23:44] porque le va a dar beneficios tributarios para su formalización.
+[23:48] En cambio, en el régimen ordinario aplicaría normal el artículo eh artículo 600 del Estatuto Tributario,
+[23:55] el que me habla del periodo del IVA, que puede ser bimestral o cuatrimestral
+[23:58] y el impuesto al consumo pues sí se presenta de manera bimestral.
+[24:03] [transition sound] Como habíamos hablado anteriormente, eh en el régimen simple no necesariamente los pagos deben estar bancarizados,
+[24:10] pero si yo soy responsable de IVA y quiero tomarme ese IVA pagado como un IVA descontable,
+[24:16] esa factura con IVA debe estar bancarizada.
+[24:19] En cambio, el régimen ordinario, todo debe estar bancarizado,
+[24:22] absolutamente todos los pagos de los pagos con facturas de IVA, los pagos sin facturas de IVA, la nómina electrónica,
+[24:28] eh los documentos soporte, todo debe estar bancarizado.
+[24:32] En cambio en el régimen simple no, pero sí es un requisito si se quiere tomar el impuesto a las ventas de las compras como descontable.
+[24:40] [transition sound] ¿Cómo identifico yo un régimen simple o un régimen ordinario en el RUT?
+[24:44] Sencillo, el régimen simple se identifica con el código 47
+[24:49] en responsabilidades tributarias y el régimen ordinario se identifica con el código en el RUT 05, impuesto de renta y complementarios.
+[24:57] De esa manera yo puedo identificar si un contribuyente, un cliente o un proveedor se encuentra en el régimen simple o en el régimen ordinario.
+[25:05] [transition sound] Bueno, ¿cuándo es recomendable el régimen simple y el régimen ordinario?
+[25:09] El régimen ordinario es recomendable y es una buena opción cuando el negocio o la actividad que se desarrolla genera altos costos y gastos deducibles.
+[25:21] Sí, digamos que este esquema nos permite aprovechar todos los costos y gastos, todos los descuentos, todas las rentas exentas que tengamos
+[25:28] y y para disminuir la base gravable del impuesto, disminuir la renta líquida.
+[25:33] Si yo cuento con altos costos, altos gastos y también cuento con la operatividad, con el con los recursos
+[25:39] para poder implementar un sistema contable organizado, con nómina electrónica, con documento soporte electrónico, con eventos electrónicos, con bancarización,
+[25:47] pues yo iría por un régimen ordinario, porque es el régimen de toda la vida, el que hemos conocido y con el que hemos trabajado.
+[25:56] En cambio, el régimen simple se adapta mejor a aquellas empresas, aquellos negocios que tiene pocos gastos que pueden ser deducibles o descontables.
+[26:04] Es una estructura mucho más sencilla, graba únicamente los ingresos brutos.
+[26:09] Obviamente no se exonera del IVA porque el IVA es un impuesto completamente diferente, pero sí simplifica las cargas a los impuestos directos.
+[26:16] Aquí vamos a tributar sobre los ingresos brutos y no me voy a complicar de deducciones, de descuentos, de rentas exentas, de costos y gastos deducibles,
+[26:24] de documentos soporte electrónicos, de nóminas electrónicas porque no es necesario.
+[26:29] Entonces aquí simplifico las cargas, las obligaciones fiscales,
+[26:33] reduzco la carga administrativa y resulta en cierta manera atractivo principalmente para pequeños empresarios,
+[26:40] para pequeños emprendedores, para pequeñas empresas que buscan facilidad y rapidez en el cumplimiento de sus obligaciones tributarias y que quieren formalizarse.
+[26:49] Porque recordemos que el régimen simple también tiene un tope de ingresos. En el régimen simple no pueden optar empresas que tengan unos eh ingresos mayores a 100,000 UVTs.
+[26:58] La UVT está en 49,...9799 multiplicado por 100,000 UVTs.
+[27:03] Estamos hablando de unos 4,979,000,000 de pesos. Es decir, una empresa que tenga ingresos al año superiores a 4,979,000,000 de pesos,
+[27:12] no podría ingresar al régimen simple de tributación.
+[27:14] Se entiende que ya una empresa que tenga esa capacidad de ingresos es una empresa que ya está estructurada,
+[27:18] que tiene ya una contabilidad organizada, que tiene los recursos, que cuenta con un sistema contable, etcétera.
+[27:24] Entonces, en conclusión, la elección entre el régimen simple y el régimen ordinario dependerá del perfil del negocio.
+[27:31] Si tiene costos altos y busca tomar rentas exentas y deducciones, váyase por el ordinario.
+[27:35] Es es más beneficioso porque si usted tiene costos altos y se los puede soportar, váyase por el ordinario.
+[27:41] En cambio, si usted quiere un sistema ágil, fácil, rápido y menos burocrático, váyase por el régimen simple. Es la opción indicada para usted.
+[27:50] Ya usted dependerá. No a todas las empresas le sirve el régimen ordinario y no a todas las empresas le sirve el régimen simple.
+[27:56] Hay tarifas altísimas en el simple, como por ejemplo eh la tarifa más alta en el simple es la tarifa 14, con tarifa de 14.5,
+[28:04] que esa tarifa es para el grupo de de servicios profesionales donde predomina el factor intelectual sobre el material, como contadores, científicos, abogados,
+[28:14] ese ese grupo de nosotros como contadores no es favorable, son impuestos extremadamente altos,
+[28:21] no nos conviene el régimen simple de tributación a los contadores ni a los abogados ni a los científicos.
+[28:27] En ese caso, no es conveniente. Usted tiene que hacer un análisis, tiene que revisar el régimen simple, hacer la proyección tributaria,
+[28:34] inclusive tomar los ingresos del año anterior y hacer la comparativa.
+[28:37] ¿Cuánto pagué del impuesto de renta? ¿Cuánto pagué impuesto de industria y comercio? ¿Cuánto pagué de bomberil? ¿Cuánto pagué de avisos y tableros?
+[28:44] ¿Cuánto pagué de autorretenciones, porque eso también afecta el flujo de caja?
+[28:47] Porque puede que yo tenga una pérdida en el régimen ordinario y yo mantenga con pérdidas, pero de qué me sirve a mí generar tantas pérdidas
+[28:54] y si sigo pagando autorretenciones de manera mensual, estoy perdiendo flujo de caja, estoy perdiendo dinero.
+[28:59] Entonces yo tendría que analizar qué régimen es más conveniente.
+[29:02] La ventaja es que el régimen simple yo puedo ingresar y puedo salirme del régimen simple.
+[29:07] Yo puedo ingresar al régimen simple a más tardar el último día hábil de febrero.
+[29:11] Debo estar obviamente un año fiscal completo en el régimen simple.
+[29:14] Si yo ingreso este año tendría que estar todo el año hasta el siguiente y yo tendría la opción de en enero del siguiente año evaluar si continúo en el simple porque es opcional y optativo
+[29:24] o trasladarme al ordinario y eso lo puedo hacer hasta el penúltimo día hábil de enero.
+[29:30] Entonces no es una camisa de fuerza. Hay personas que prueban el régimen simple y les va fatal porque no hicieron una proyección tributaria,
+[29:37] pero hay personas que van al régimen simple y están casadas con el régimen simple,
+[29:40] que inclusive cuando pasó lo de la reforma tributaria que se quería eliminar el régimen simple, muchas personas que defendían el régimen simple
+[29:47] y no solo empresarios, sino contadores como yo defendemos el régimen simple de tributación.
+[29:54] Hay que hacer el análisis y en la página de la DIAN hay un simulador gratuito, el cual podemos descargar y y hacer el estudio, hacer el análisis, hacer la comparativa.
+[30:04] ¿Cuál es más conveniente? Yo los invito a que ustedes ingresen a la página de la DIAN al ambiente de régimen simple de tributación
+[30:09] y vayan al módulo de simulador, descarguen el simulador y hagan el ejercicio.
+[30:14] ¿Qué es más conveniente para usted, para su negocio, para su empresa?
+[30:19] Deje de pagar impuestos de una forma tan [bleep].
+[30:22] Comienza a pagar los impuestos de manera inteligente.
+[30:24] Deje de perder la plata, deje de botar la plata en impuestos que usted puede ahorrarse.
+[30:30] Haga una proyección tributaria, esto no es evasión, esto es una proyección tributaria,
+[30:34] usted está utilizando las herramientas que le da el Estado, el Estatuto tributario y haga una proyección tributaria.
+[30:41] Yo he tenido clientes que han pagado en un año en el régimen ordinario 50 millones de pesos y al momento de pasarse al simple han pagado en el año 20 millones de pesos,
+[30:50] se han ahorrado 30 millones de pesos en impuestos de manera inteligente, tomando las herramientas que nos permite el Estatuto tributario,
+[30:57] porque para eso es el Estatuto tributario, para eso son las herramientas, hay que conocerlas, nosotros por ignorancia pagamos impuestos de una forma tan abismal
+[31:06] y nos estamos quejando y si ustedes buscan una una asesoría contable, un experto que los guíe por el camino, que les diga qué tienen que hacer, que los asesore,
+[31:16] ustedes van a tener una carga fiscal inteligente.
+[31:20] Mi recomendación es esa, hagan el análisis, descarguen el simulador,
+[31:24] verifiquen qué régimen es más conveniente, en cuál pago menos impuestos, cuál me facilita a mí la vida, cuál mejora mi operatividad en el negocio.
+[31:32] Esa es mi invitación a ustedes contadores, eh contables, asistentes, auxiliares, eh tributaristas, eh financieros, es acérquense al Estatuto tributario,
+[31:41] léanlo, revisen qué se pueden tomar de ahí,
+[31:43] qué beneficios tienen, o asesórense.
+[31:47] Usted, empresario, emprendedor, [voice filter starts] si usted no busca un asesoramiento y no sabe nada al respecto, su negocio se va a hundir,
+[31:53] porque la carga fiscal y tributaria se lo va a comer vivo. [voice filter ends]
+[31:57] Recuerden seguirme para más contenido eh contable, más contenido educativo, más contenido del régimen simple, vamos a estar hablando más del régimen simple.
+[32:05] Recuerden eh guardar este video, compartirlo con aquel empresario, aquel amigo que ustedes tengan
+[32:11] que está pensando [bleep]
+[32:13] porque pago tantos impuestos, envíele este video, compártele esta información, dígale, mire, yo vi que usted puede estar en el régimen simple o mire que usted está en el régimen simple y no debería estar en el régimen simple.
+[32:25] Sálgase al régimen ordinario nuevamente, devuélvase al régimen ordinario porque el régimen simple no le sirve.
+[32:29] Compartan este video con aquel amigo que ustedes vean que lo necesiten, aquel estudiante de contabilidad, aquel contador que aún no sabe del régimen simple, que aún está perdido en el régimen simplificado en el régimen común
+[32:40] para que se actualice y se coloque al día en la materia.
+[32:43] Recuerden mi nombre Miguel Grattz, esto es Grattz contadores y nos vemos hasta la próxima. Chao, chao.
+[32:48] [video end]
+</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Simple smooth scroll for navigation
+        document.querySelectorAll('aside a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Conceptual function for Base Calculation Tool
+        function calcularBaseConceptual() {
+            const ingresos = document.getElementById('ingresos').value;
+            const costosGastos = document.getElementById('costosGastos').value;
+            const resultRST = document.getElementById('result-base-rst');
+            const resultROT = document.getElementById('result-base-rot');
+
+            resultRST.style.display = 'block';
+            resultROT.style.display = 'block';
+
+            if (ingresos) {
+                 resultRST.textContent = `RST Base: ${parseFloat(ingresos).toLocaleString('es-CO', {style: 'currency', currency: 'COP'})} (Ingresos Brutos)`;
+                 if (costosGastos) {
+                    const rentaLiquidaAprox = parseFloat(ingresos) - parseFloat(costosGastos);
+                    resultROT.textContent = `ROT Base (Aprox): ${rentaLiquidaAprox.toLocaleString('es-CO', {style: 'currency', currency: 'COP'})} (Renta Líquida Conceptual)`;
+                 } else {
+                     resultROT.textContent = `ROT Base: Se calcularía restando costos/gastos válidos de los ingresos.`;
+                 }
+            } else {
+                resultRST.textContent = "RST Base: Ingrese los Ingresos Brutos.";
+                resultROT.textContent = "ROT Base: Ingrese Ingresos y Costos/Gastos.";
+            }
+        }
+    </script>
+</body>
+</html>
